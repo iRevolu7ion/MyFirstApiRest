@@ -4,16 +4,17 @@ import React,{useState,useEffect} from 'react';
 function App() {
 
   const [items, setItems] = useState([]);
-  const [newItem, setNewItem] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newPrice,setNewPrice] = useState('');
   const [editDescription, setEditDescription] = useState(null);
   const [editPrice, setEditPrice] = useState('');
 
 
   useEffect(() => {
-    getItems();
+    fetchItems();
   },[]);
 
-  const getItems = async()=> {
+  const fetchItems = async()=> {
     const response = await fetch('http://localhost:3001/api/getitems');
     const data= await response.json();    
     setItems(data);
@@ -23,26 +24,52 @@ function App() {
     const response = await fetch('http://localhost:3001/api/additem',{
       method:"POST",
       headers:{
-        "Content-Type":"application/jason"
+        "Content-Type":"application/json"
       }, 
-       body: JSON.stringify({description : editDescription, price : editPrice})
+       body: JSON.stringify({
+        description : newDescription, 
+        price : newPrice})
     })
   };
 
   return (
     <div className="App">
-      <header className="App-header">
-     
+      <h1>BASIC CRUD ITEMS</h1>
+          <div>
+              <p>
+                <label>Description:</label>
+                <input 
+                type='text'
+                value={newDescription}
+                onChange={(e)=> setNewDescription(e.target.value)}
+                placeholder=' Enter the description of the item'
+                
+                />
+              </p>
+            <p>
+            <label>Price: </label>
+                <input 
+                type='number'
+                value={newPrice}
+                onChange={(e)=> setNewPrice(e.target.value)}
+                placeholder=' Enter the price of the item'
+                               
+                />
+            </p>
+            <button onClick={addItem}>ADD ITEM</button>
+            <h1>ITEMS</h1>
+          </div>
+          <div>
+            <ul>
+              {items.map((item)=>(
+                <li key={item.id}>
+                  Description: {item.description} - Precio: {item.price}
+                </li>
+              ))}
+            </ul>
 
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+          </div>
     </div>
   );
 }
